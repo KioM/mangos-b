@@ -1899,7 +1899,7 @@ void Aura::TriggerSpell()
 
                         if (triggerTarget->GetPower(POWER_MANA) < -damage)
                         {
-                            damage -= triggerTarget->GetPower(POWER_MANA);
+                            damage = -triggerTarget->GetPower(POWER_MANA);
                             triggerTarget->RemoveAurasDueToSpell(auraId);
                         }
 
@@ -9701,8 +9701,18 @@ void Aura::HandleAuraControlVehicle(bool apply, bool Real)
         // some spells seem like store vehicle seat info in basepoints, but not true for all of them, so... ;/
         int32 seat = -1;
 
-        if (GetModifier()->m_amount <= MAX_VEHICLE_SEAT)
-            seat = GetModifier()->m_amount - 1;
+        switch (GetId())
+        {
+// values below - from Michalpolko implementation, but i not sure in this...
+//            case 62708:
+//            case 62711:
+//                seat = GetModifier()->m_amount;
+//                break;
+            default:
+                if (GetModifier()->m_amount <= MAX_VEHICLE_SEAT)
+                    seat = GetModifier()->m_amount - 1;
+                break;
+        }
 
         if (caster->GetTypeId() == TYPEID_PLAYER && !target->GetVehicleKit()->HasEmptySeat(seat))
             seat = -1;
